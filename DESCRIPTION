@@ -1,0 +1,24 @@
+Package: causalgeex
+Type: Package
+Date: 2017-09-06
+Title: Causal Effects of Nonrandomized Policies Assuming Clustered Interference
+Version: 0.0.0.9000
+Authors@R: person("Brian", "Barkley", email = "BarkleyBG@unc.edu",
+    role = c("aut", "cre"))
+Description: Estimating causal effects from observational studies. Implemented
+    methods include inverse probability of treatment weights, and parametric
+    G-formula. This package uses the geex package for estimation and for its API
+    functionality to obtain the empirical sandwich variance estimator using 
+    standard estimating equation theory.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
+Depends:
+    R (>= 3.3)
+Imports:
+    geex (>= 1.0.3),
+    Formula (>= 1.1-2), 
+Suggests:
+    testthat (>= 1.0.2),
+    roxygen2 (>= 6.0.1)
