@@ -16,5 +16,5 @@ grab_psiFUN_glm(object, data, weights = 1, ...)
 \item{...}{more stuffs}
 }
 \description{
-Temporary Function Until geex>1.0.3
+This is a placeholder function until geex::grab_psifun.* is fixed.
 }

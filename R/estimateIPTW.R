@@ -1,11 +1,10 @@
 
-
 #' Estimate ATE with IPTW
 #'
 #' Fits a parametric model and estimates ATE via IPTW with Wald-type confidence
 #' intervals from the empirical sandwich standard error estimates.
 #'
-#' @param formula Three-part formula: Outcome | Treatment ~ model_predictors. Will be coerced to object of type Formula.
+#' @param formula Three-part formula: Outcome | Treatment ~ model_predictors | cluster_ID. Will be coerced to object of type Formula.
 #' @param data the dataframe. Will be coerced from "tbl_df" to data.frame.
 #' @param model_method currently only supported "logistic" for logit-link binomial GLM.
 #' @param weight_type Currently only supports "unstabilized"
@@ -20,79 +19,63 @@ estimateIPTW <- function(
   if ( "tbl_df" %in% class(data) ) {
     data <- as.data.frame(data, stringsAsFactors = FALSE)
   }
-  # if (weight_type!= "unstabilized") {stop("only unstabilized weights implemented")}
 
   formula <- Formula::as.Formula(formula)
   len_lhs_formula <- length(formula)[1]
   formula_terms <- stats::terms(formula)
-  outcome_var_name <- attr(formula_terms, "term.labels")[1]
+  formula_factors <- attr(formula_terms, "factors")
+  outcome_var_name <- row.names(formula_factors)[1]
+  treatment_var_name <- row.names(formula_factors)[2]
   modeling_formula <- formula(
     stats::terms(formula, lhs = len_lhs_formula, rhs = -2)
   )
 
-  ## Fit GLM model
-  if (model_method == "logistic") {
-    trt_model_obj  <- stats::glm(
-      formula = modeling_formula,
-      data = data,
-      family = stats::binomial()
+  treatment_vector <- data[[treatment_var_name]]
+  outcome_vector <- data[[outcome_var_name]]
+
+
+  treatment_model_fit <- fitTreatmentModel(
+    data = data,
+    formula = modeling_formula,
+    model_method = model_method
+  )
+  args_list <- treatment_model_fit
+
+  args_list <- append(
+    args_list,
+    list(
+      outcome = outcome_vector,
+      outcome_var_name = outcome_var_name,
+      treatment = treatment_vector,
+      treatment_var_name = treatment_var_name
     )
-
-     # browser()
-    ##doing the following for estimation.
-    # model_matrix <- stats::model.matrix(trt_model_obj, data = data)
-    treatment <- stats::model.response(stats::model.frame(
-      trt_model_obj$formula, data = data))
-    prob_treated <- stats::predict(trt_model_obj, type = "response")
-  } else { stop("only model_method='logistic' implemented") }
-
-
-
+  )
   if (weight_type == "unstabilized") {
-    calcFunIPTW <- match.fun('unstabilizedIPTW')
+    # calcFunIPTW <- match.fun('unstabilizedIPTW')
+    calcFunIPTW <- unstabilizedIPTW
   } else {
     # if (weight_type!= "unstabilized") {
     stop("only unstabilized weights implemented")}
 
-  IPTWs <- calcFunIPTW(
-    outcome = data[[outcome_var_name]],
-    treatment = treatment,
-    prob_treated = prob_treated
-  )
-  estimated_delta <- mean(IPTWs)
-  theta_hat <- c(stats::coef(trt_model_obj), estimated_delta)
+  args_list$calcFunIPTW <- calcFunIPTW
 
-  warning("need to use new geex grab_psifun in eeFunIPTW")
+
+  IPTWs <- do.call(calcFunIPTW, args = args_list)
+  estimated_delta <- mean(IPTWs)
+  theta_hat <- c(args_list$treatment_param_ests,estimated_delta )
+
+  outer_args_list <- args_list[names(formals( eeFunIPTW ))[-1]]
 
   estimates <- geex::m_estimate(
     estFUN = eeFunIPTW,
     data = data,
     compute_roots = FALSE,
     roots = theta_hat,
-    # root_control = setup_root_control(start = c(coef(trt_model_obj), 0)),
-    # inner_args = list(
-    #   weight_type = weight_type
-    # ),
-    outer_args = list(
-      trt_model_obj = trt_model_obj,
-      outcome_var_name = outcome_var_name,
-      calcFunIPTW = calcFunIPTW
-
-    )
+    outer_args = outer_args_list,
+    ...
   )
 }
 
-# print('got LHS formula')
-# len_rhs_formula <- length(formula)[2]
-
-# grouping_var_name <- attr( stats::terms(formula),
-#  lhs = 0, rhs = len_rhs_formula), 'term.labels')
-# model.matrix(modeling_formula,data=data)
-# mf1 <- model.frame(formula=modeling_formula, data=data)
-#
-# # formula <- as.formula()
-#  model.response(mf1)
-#
 
 #' Function to Compute Horwitz-Thompson
 #'
@@ -101,22 +84,17 @@ estimateIPTW <- function(
 #' @param outcome vector of outcome values
 #' @param treatment vector of treatment values
 #' @param prob_treated vectof of propensity scores
+#' @inheritParams unstabilizedDRIPTW
 #'
 #' @export
 unstabilizedIPTW <- function(
-  outcome, treatment, prob_treated
+  outcome, treatment, prob_treated,...
 ){
   signed_trt_div_ps <- ifelse(treatment, 1/prob_treated, -1/(1-prob_treated))
   # ){ ##this takes care of PS=1 or PS = 0
   outcome*signed_trt_div_ps
-  #   return( outcome * (-(!treatment)) )
-  # }
-  # outcome * (
-  #   (treatment/prob_treated) - ((1-treatment)/(1-prob_treated))
-  # )
 }
 
-# options(error='recover')
 
 #' Estimating Function for IPTW
 #'
@@ -126,41 +104,40 @@ unstabilizedIPTW <- function(
 #' @param outcome_var_name The name of the column in the dataframe indicating outcome of interest
 #' @inheritParams estimateIPTW
 #' @param calcFunIPTW this is a function object specified in the weight_type argument
+#' @inheritParams eeFunDRIPTW
 #'
 #' @export
 eeFunIPTW <- function(
-  data, trt_model_obj, outcome_var_name,calcFunIPTW
+  data, trt_model_obj,
+  outcome_var_name,
+  treatment_var_name,
+  calcFunIPTW,
+  predictTreatment
 ){
 
   # warning("need to use new geex grab_psifun")
   closureModel <- grab_psiFUN_glm(data=data,object = trt_model_obj)
 
   model_matrix <- stats::model.matrix(trt_model_obj$formula,data = data)
-  # Y         <- as.numeric(stats::model.frame(geex::grab_response_formula(object), data = data)[[1]])
-  treatment <- stats::model.response(stats::model.frame(trt_model_obj$formula, data = data))
   outcome <- data[[outcome_var_name]]
+  treatment <- data[[treatment_var_name]]
 
 
   ## Estimating function for IPTW (unstabilized)
   closureIPTW <- function(theta){
     num_params  <- length(theta)
-    # num_model_params <- length(coef(trt_model_obj)) ##num_params-1
-    linear_predictor  <- model_matrix %*% theta[-num_params]
-    prob_treated <- stats::plogis(linear_predictor)
 
-    # if (weight_type == "unstabilized") {
-    ## Y*A/PS - Y*(1-A)/(1-PS)
+    prob_treated <- predictTreatment(
+      model_matrix = model_matrix,
+      theta = theta[-num_params]
+    )
+
     IPTWs <-
       calcFunIPTW(
-        # unstabilizedIPTW(
         outcome = outcome,
         treatment = treatment,
         prob_treated = prob_treated
       )
-    # } else {
-    #   stop("weight_type == 'unstabilized' only implemented. Not stabilized yet")
-    # }
-
     IPTWs - theta[num_params]
   }
 
