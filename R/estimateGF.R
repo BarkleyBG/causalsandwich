@@ -1,52 +1,4 @@
 
-#' Estimating Function for IPTW
-#'
-#' This function is to be passed into geex::m_estimate
-#'
-#' @param outcome_model_obj The fitted model object (usually a glm).
-#' @inheritParams estimateGF
-#' @inheritParams eeFunDRIPTW
-#'
-#' @export
-eeFunGF <- function(
-  data,
-  outcome_model_obj,
-  predictOutcome,
-  treatment_var_name
-){
-
-  closureModel <- grab_psiFUN_glm(data=data,object = outcome_model_obj)
-
-  outcome_model_matrices <- makeOutcomeModelMats(
-    data = data,
-    outcome_model_obj = outcome_model_obj,
-    treatment_var_name = treatment_var_name
-  )
-  model_matrix1 <- outcome_model_matrices[[1]]
-  model_matrix0 <- outcome_model_matrices[[2]]
-
-
-  closureGF <- function(theta){
-    num_params  <- length(theta)
-
-    prob_outcomes <- lapply(
-      outcome_model_matrices,
-      predictOutcome,
-      theta = theta[-num_params]
-    )
-
-    (prob_outcomes[[1]] - prob_outcomes[[2]]) - theta[num_params]
-  }
-
-  closureStacked <- function(theta){
-
-    c(
-      closureModel(theta[-length(theta)]),## Returns vector of len=length(theta)-1
-      closureGF(theta) ## Returns a single
-    ) ## Returns a vector of len=length(theta)
-  }
-}
-
 
 #' Estimate ATE with IPTW
 #'
@@ -117,5 +69,54 @@ estimateGF <- function(
   )
 }
 
+
+
+## #' Estimating Function for IPTW
+## #'
+## #' This function is to be passed into geex::m_estimate
+## #'
+## #' @param outcome_model_obj The fitted model object (usually a glm).
+## #' @inheritParams estimateGF
+## #' @inheritParams eeFunDRIPTW
+## #'
+## #' @export
+eeFunGF <- function(
+  data,
+  outcome_model_obj,
+  predictOutcome,
+  treatment_var_name
+){
+
+  closureModel <- grab_psiFUN_glm(data=data,object = outcome_model_obj)
+
+  outcome_model_matrices <- makeOutcomeModelMats(
+    data = data,
+    outcome_model_obj = outcome_model_obj,
+    treatment_var_name = treatment_var_name
+  )
+  model_matrix1 <- outcome_model_matrices[[1]]
+  model_matrix0 <- outcome_model_matrices[[2]]
+
+
+  closureGF <- function(theta){
+    num_params  <- length(theta)
+
+    prob_outcomes <- lapply(
+      outcome_model_matrices,
+      predictOutcome,
+      theta = theta[-num_params]
+    )
+
+    (prob_outcomes[[1]] - prob_outcomes[[2]]) - theta[num_params]
+  }
+
+  closureStacked <- function(theta){
+
+    c(
+      closureModel(theta[-length(theta)]),## Returns vector of len=length(theta)-1
+      closureGF(theta) ## Returns a single
+    ) ## Returns a vector of len=length(theta)
+  }
+}
 
 

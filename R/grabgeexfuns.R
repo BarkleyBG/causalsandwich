@@ -1,14 +1,14 @@
 
-#' Temporary Function Until geex>1.0.3
-#'
-#' This is a placeholder function until geex::grab_psifun.* is fixed.
-#'
-#' @param object stats::glm model object
-#' @param data data
-#' @param weights 1
-#' @param ... more stuffs
-#'
-#'
+# #' Temporary Function Until geex>1.0.3
+# #'
+# #' This is a placeholder function until geex::grab_psifun.* is fixed.
+# #'
+# #' @param object stats::glm model object
+# #' @param data data
+# #' @param weights 1
+# #' @param ... more stuffs
+# #'
+# #'
 grab_psiFUN_glm <- function(object, data, weights = 1, ...){
 
   X  <- stats::model.matrix(object$formula, data = data)

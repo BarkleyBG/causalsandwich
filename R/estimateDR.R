@@ -110,18 +110,18 @@ estimateDRIPTW <- function(
 }
 
 
-#' Function to Compute Horwitz-Thompson
-#'
-#' Computes estimates for each individual by IPTW (unstabilized) methods.
-#'
-#' @param outcome vector of outcome values
-#' @param treatment vector of treatment values
-#' @param prob_treated vector of propensity scores
-#' @param prob_outcome1 vector of E(Y=1 | Trt=1, covars)
-#' @param prob_outcome0 vector of E(Y=1 | Trt=0, covars)
-#' @param ... dots
-#'
-#' @export
+# #' Function to Compute Horwitz-Thompson
+# #'
+# #' Computes estimates for each individual by IPTW (unstabilized) methods.
+# #'
+# #' @param outcome vector of outcome values
+# #' @param treatment vector of treatment values
+# #' @param prob_treated vector of propensity scores
+# #' @param prob_outcome1 vector of E(Y=1 | Trt=1, covars)
+# #' @param prob_outcome0 vector of E(Y=1 | Trt=0, covars)
+# #' @param ... dots
+# #'
+# #' @export
 unstabilizedDRIPTW <- function(
   outcome, treatment,
   prob_treated,
@@ -141,24 +141,24 @@ unstabilizedDRIPTW <- function(
 }
 
 
-#' Estimating Function for DRIPTW
-#'
-#' This function is to be passed into geex::m_estimate
-#'
-#' @param outcome_model_obj The fitted outcome model object (usually a glm).
-#' @param outcome_var_name The name of the column in the dataframe indicating outcome of interest
-#' @param num_outcome_params n_trt
-#' @param idx_outcome_params vector of indices
-#' @param trt_model_obj The fitted treatment model object (usually a glm).
-#' @param treatment_var_name The name of the column in the dataframe indicating treatment
-#' @param num_treatment_params n_trt
-#' @param idx_treatment_params vector of indices
-#' @inheritParams estimateDRIPTW
-#' @param calcFunDRIPTW this is a function object specified in the weight_type argument
-#' @param predictOutcome the function to predict outcome probs
-#' @param predictTreatment the function to predict propensity score
-#'
-#' @export
+# #' Estimating Function for DRIPTW
+# #'
+# #' This function is to be passed into geex::m_estimate
+# #'
+# #' @param outcome_model_obj The fitted outcome model object (usually a glm).
+# #' @param outcome_var_name The name of the column in the dataframe indicating outcome of interest
+# #' @param num_outcome_params n_trt
+# #' @param idx_outcome_params vector of indices
+# #' @param trt_model_obj The fitted treatment model object (usually a glm).
+# #' @param treatment_var_name The name of the column in the dataframe indicating treatment
+# #' @param num_treatment_params n_trt
+# #' @param idx_treatment_params vector of indices
+# #' @inheritParams estimateDRIPTW
+# #' @param calcFunDRIPTW this is a function object specified in the weight_type argument
+# #' @param predictOutcome the function to predict outcome probs
+# #' @param predictTreatment the function to predict propensity score
+# #'
+# #' @export
 eeFunDRIPTW <- function(
   data,
   outcome_model_obj, trt_model_obj,

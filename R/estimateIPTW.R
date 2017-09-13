@@ -77,16 +77,16 @@ estimateIPTW <- function(
 }
 
 
-#' Function to Compute Horwitz-Thompson
-#'
-#' Computes estimates for each individual by IPTW (unstabilized) methods.
-#'
-#' @param outcome vector of outcome values
-#' @param treatment vector of treatment values
-#' @param prob_treated vectof of propensity scores
-#' @inheritParams unstabilizedDRIPTW
-#'
-#' @export
+## #' Function to Compute Horwitz-Thompson
+## #'
+## #' Computes estimates for each individual by IPTW (unstabilized) methods.
+## #'
+## #' @param outcome vector of outcome values
+## #' @param treatment vector of treatment values
+## #' @param prob_treated vectof of propensity scores
+## #' @inheritParams unstabilizedDRIPTW
+## #'
+## #' @export
 unstabilizedIPTW <- function(
   outcome, treatment, prob_treated,...
 ){
@@ -96,21 +96,21 @@ unstabilizedIPTW <- function(
 }
 
 
-#' Estimating Function for IPTW
-#'
-#' This function is to be passed into geex::m_estimate
-#'
-#' @param trt_model_obj The fitted model object (usually a glm).
-#' @param outcome_var_name The name of the column in the dataframe indicating outcome of interest
-#' @inheritParams estimateIPTW
-#' @param calcFunIPTW this is a function object specified in the weight_type argument
-#' @inheritParams eeFunDRIPTW
-#'
-#' @export
+### #' Estimating Function for IPTW
+### #'
+### #' This function is to be passed into geex::m_estimate
+### #'
+### #' @param trt_model_obj The fitted model object (usually a glm).
+### #' @param outcome_var_name The name of the column in the dataframe indicating outcome of interest
+### #' @inheritParams estimateIPTW
+### #' @param calcFunIPTW this is a function object specified in the weight_type argument
+### #' @inheritParams eeFunDRIPTW
+### #'
+### #' @export
 eeFunIPTW <- function(
-  data, trt_model_obj,
-  outcome_var_name,
-  treatment_var_name,
+ data, trt_model_obj,
+ outcome_var_name,
+ treatment_var_name,
   calcFunIPTW,
   predictTreatment
 ){

@@ -1,9 +1,9 @@
 
-#' Prep Outcome Model Matrices for Prediction
-#'
-#' @inheritParams eeFunDRIPTW
-#'
-#' @export
+# #' Prep Outcome Model Matrices for Prediction
+# #'
+# #' @inheritParams eeFunDRIPTW
+# #'
+# #' @export
 makeOutcomeModelMats <- function(
   data,
   outcome_model_obj,
@@ -18,12 +18,12 @@ makeOutcomeModelMats <- function(
 }
 
 
-#' Prep Outcome Model Matrices for Prediction
-#'
-#' @inheritParams eeFunDRIPTW
-#' @inheritParams estimateGF
-#'
-#' @export
+## #' Prep Outcome Model Matrices for Prediction
+## #'
+## #' @inheritParams eeFunDRIPTW
+## #' @inheritParams estimateGF
+## #'
+## #' @export
 fitOutcomeModel <- function(
   data,
   formula,
@@ -76,11 +76,11 @@ fitOutcomeModel <- function(
   out
 }
 
-#' Prep Outcome Model Matrices for Prediction
-#'
-#' @inheritParams fitOutcomeModel
-#'
-#' @export
+## #' Prep Outcome Model Matrices for Prediction
+## #'
+## #' @inheritParams fitOutcomeModel
+## #'
+## #' @export
 fitTreatmentModel <- function(
   data,
   formula,

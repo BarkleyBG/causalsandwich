@@ -1,0 +1,117 @@
+---
+title: "Introduction to causalgeex"
+author: "Brian G. Barkley"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to causalgeex}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# `causalgeex` for estimating causal effects with empirical sandwich variance estimator
+
+Currently implemented as of version 0.0.0.9000:
+- Estimators of the average treament effect
+    - IPTW
+    - G-formula
+    - Doubly Robust estimator
+    
+## Why use `causalgeex`? Easy implementation with valid inference!
+
+- This package is inteded to be a "one-stop-shop" with emphasis on ease of use. 
+- The estimators here are consistent and asymptotically normal following usual regularity assumptions.
+
+
+### What's `geex`? 
+
+[geex](https://cran.r-project.org/web/packages/geex/index.html) is a package designed for easy implementation of estimating equations. The `causalgeex` package is powered by `geex`
+
+### What are estimating equations?
+
+See [Stefanski and Boos (2002)](http://www.jstor.org/stable/3087324?seq=1#page_scan_tab_contents)
+
+## How to install
+
+The package can be installed from Github:
+
+```{r, eval = FALSE}
+devtools::install_github("BarkleyBG/causalgeex")
+```
+
+## Examples
+
+Whenver possible, the causal effect estimate is listed last.
+
+### Estimating the Average Treatment Effect
+
+First, some data:
+
+```{r}
+library(causalgeex)
+
+n <- 200
+data <- data.frame(
+  Covar1 = rnorm(n),
+  Covar2 = rnorm(n)
+)
+trtprobs <- plogis(0.2  + 0.5*data$Covar1 + 0.1*data$Covar2 + 0.2*data$Covar1 * data$Covar2)
+data$BinaryTrt <- rbinom(n, 1, trtprobs)
+
+outprobs <- plogis(0.5  + 0.2*data$Covar1 - 0.2*data$Covar2 + 0.2*data$Covar1 * data$Covar2 -0.2*data$BinaryTrt)
+data$BinaryOutcome <- rbinom(n, 1, outprobs)
+```
+
+#### Defensive Programming
+
+Until rigorous tests and defensive programming are added, users are recommended to use the following coding schemes:
+
+- Binary treatments should be indicator variables, with 1 for "treated" and 0 for "untreated". Use integers, not factors.
+- Binary outcomes should be indicator variables, with for "outcome" and 0 for "no outcome". Use integers, not factors.
+
+
+### Inverse Probability (of treament) Weighting
+
+```{r}
+
+```
+
+### G-formula
+
+### Doubly-Robust Estimation 
+
+- Here we specify two formulas, one for each model. 
+- For illustration we also pass in `deriv_control = geex::setup_deriv_control(method="simple")`. This results in quicker (but probably less accurate) derivatives in the variance computations. This is passed directly to the `geex` guts.
+
+```{r}
+outcome_regression_formula <- BinaryOutcome ~ BinaryTrt + Covar1*Covar2
+treatment_model_formula <- BinaryTrt ~ Covar1 * Covar2
+
+DRIPTW <- estimateDRIPTW(
+  data = data,
+  outcome_formula = outcome_regression_formula,
+  treatment_formula = treatment_model_formula,
+  outcome_model_method = "logistic",
+  treatment_model_method = "logistic",
+  deriv_control = geex::setup_deriv_control(method="simple")
+)
+
+(ests <- DRIPTW@estimates)
+(vcov <- DRIPTW@vcov)
+```
+
+An estimate and 95\% confidence interval is then
+
+```{r}
+ests[10]
+ests[10] + stats::qnorm(c(0.025,0.975))*vcov[10,10]
+```
+
+
+
+
