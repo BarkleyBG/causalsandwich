@@ -2,26 +2,26 @@
 % Please edit documentation in R/estimateDR.R
 \name{estimateDRIPTW}
 \alias{estimateDRIPTW}
-\title{Estimate ATE with IPTW}
+\title{Estimate ATE with Doubly Robust IPTW.}
 \usage{
 estimateDRIPTW(data, outcome_formula, outcome_model_method = "logistic",
-  treatment_formula, treatment_model_method = "logistic",
-  weight_type = "unstabilized", ...)
+  treatment_formula, treatment_model_method = "logistic", ...)
 }
 \arguments{
-\item{data}{the dataframe. Will be coerced from "tbl_df" to data.frame.}
+\item{data}{The dataframe. This will be coerced from "tbl_df" to data.frame.}
 
-\item{outcome_formula}{Two part formula: Outcome ~ Covars + Trt}
+\item{outcome_formula}{A two-part formula for the outcome regression.}
 
-\item{outcome_model_method}{currently only supported "logistic" for logit-link binomial GLM.}
+\item{outcome_model_method}{currently only supported "logistic" for
+logit-link binomial GLM.}
 
-\item{treatment_formula}{Two part formula: Trt ~ Covars}
+\item{treatment_formula}{A two-part formula for the treatment model.}
 
-\item{treatment_model_method}{currently only supported "logistic" for logit-link binomial GLM.}
+\item{treatment_model_method}{currently only supported "logistic" for
+logit-link binomial GLM.}
 
-\item{weight_type}{Currently only supports "unstabilized"}
-
-\item{...}{additional args}
+\item{...}{additional arguments, especially those passed to
+\code{\link[geex]{m_estimate}} or the modeling function}
 }
 \description{
 Fits a parametric model and estimates ATE via IPTW with Wald-type confidence

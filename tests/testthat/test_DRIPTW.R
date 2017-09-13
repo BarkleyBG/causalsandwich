@@ -33,7 +33,7 @@ args_DRIPTW <- list(
 
   outcome_model_method="logistic"       ,
   treatment_model_method="logistic"        ,
-  weight_type="unstabilized"     ,
+  # weight_type="unstabilized"     ,
   deriv_control = geex::setup_deriv_control(method="simple")
 )
 DRIPTW <- do.call(estimateDRIPTW, args = args_DRIPTW)

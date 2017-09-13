@@ -4,11 +4,10 @@
 #' Fits a parametric model and estimates ATE via IPTW with Wald-type confidence
 #' intervals from the empirical sandwich standard error estimates.
 #'
-#' @param formula Three-part formula: Outcome | Treatment ~ model_predictors | cluster_ID. Will be coerced to object of type Formula.
-#' @param data the dataframe. Will be coerced from "tbl_df" to data.frame.
-#' @param model_method currently only supported "logistic" for logit-link binomial GLM.
+#' @param formula Three-part formula: Outcome | Treatment ~ Covars.
+#' @param model_method Currently only supports "logistic" for logit-link binomial GLM.
 #' @param weight_type Currently only supports "unstabilized"
-#' @param ... additional args
+#' @inheritParams estimateDRIPTW
 #'
 #' @export
 estimateIPTW <- function(

@@ -77,19 +77,75 @@ Until rigorous tests and defensive programming are added, users are recommended 
 
 ### Inverse Probability (of treament) Weighting
 
-```{r}
+Estimating the Average Treatment Effect only takes specifying a few arguments. The below code will estimate propensity scores with the logistic GLM model and estimate the ATE with the Horwitz-Thompson IPTW estimator.
 
+The formula specified is a mixture of two formulas. That is, `BinaryTrt ~ Covar1*Covar2` will be passed into the logistic model to fit a model for treatment with main effects and interaction terms with the two covariates. The first section of the multi-part formula indicates that the column named `BinaryOutcome` in `data` corresponds to the outcome variable of interest.
+
+
+```{r} 
+formula <- BinaryOutcome | BinaryTrt ~ Covar1 * Covar2
+
+IPTW <- estimateIPTW(
+  data = data, 
+  formula = formula 
+) 
 ```
 
+Output includes point estimates and the sandwich variance estimator:
+
+```{r}
+(ests <- IPTW@estimates)
+(vcov <- IPTW@vcov) 
+```
+
+The first four parameters correspond to the treatment model parameters. It is the fifth parameter that corresponds to the ATE. Thus, a point estimate and 95\% confidence interval for this parameter are:
+
+```{r}
+param_num <- 5
+ests[param_num]
+ests[param_num] + stats::qnorm(c(0.025,0.975))*vcov[param_num,param_num]
+```
+
+Since the treatment model is correctly specified, the estimator is consistent (as is the variance estimator). 
+
 ### G-formula
+
+
+- Here we model the outcome on treatment and covariates, so we supply `outcome_regression_formula` to the `formula` argument.
+- We also supply the name of the column in the dataset corresponding to treatment, `treatment_var_name = "BinaryTrt"`.
+
+```{r}
+outcome_regression_formula <- BinaryOutcome ~ BinaryTrt + Covar1 * Covar2
+
+GF <- estimateGF(
+  data = data,
+  treatment_var_name = "BinaryTrt",
+  formula = outcome_regression_formula, 
+  model_method = "logistic" 
+) 
+ 
+(ests <- GF@estimates)
+(vcov <- GF@vcov) 
+```
+
+An estimate and 95\% confidence interval is then
+
+```{r}
+param_num <- 6
+ests[param_num]
+ests[param_num] + stats::qnorm(c(0.025,0.975))*vcov[param_num,param_num]
+```
+
 
 ### Doubly-Robust Estimation 
 
 - Here we specify two formulas, one for each model. 
+    - We also specify modeling methods for each model. 
+    - It is not necessary to specify other variable names, as the other arguments are sufficient.
 - For illustration we also pass in `deriv_control = geex::setup_deriv_control(method="simple")`. This results in quicker (but probably less accurate) derivatives in the variance computations. This is passed directly to the `geex` guts.
 
 ```{r}
-outcome_regression_formula <- BinaryOutcome ~ BinaryTrt + Covar1*Covar2
+outcome_regression_formula <- BinaryOutcome ~ BinaryTrt + Covar1 * Covar2
 treatment_model_formula <- BinaryTrt ~ Covar1 * Covar2
 
 DRIPTW <- estimateDRIPTW(
@@ -108,8 +164,9 @@ DRIPTW <- estimateDRIPTW(
 An estimate and 95\% confidence interval is then
 
 ```{r}
-ests[10]
-ests[10] + stats::qnorm(c(0.025,0.975))*vcov[10,10]
+param_num <- 10
+ests[param_num]
+ests[param_num] + stats::qnorm(c(0.025,0.975))*vcov[param_num,param_num]
 ```
 
 

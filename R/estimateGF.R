@@ -1,15 +1,14 @@
 
 
-#' Estimate ATE with IPTW
+#' Estimate ATE with G-Formula
 #'
 #' Fits a parametric model and estimates ATE via IPTW with Wald-type confidence
 #' intervals from the empirical sandwich standard error estimates.
 #'
-#' @param formula Three-part formula: Outcome | Treatment ~ model_predictors. Will be coerced to object of type Formula.
-#' @param data the dataframe. Will be coerced from "tbl_df" to data.frame.
-#' @param model_method currently only supported "logistic" for logit-link binomial GLM.
-#' @param treatment_var_name the name of the treatment variable. Must line up with formula.
-#' @param ... the dots
+#' @param formula Two-part formula: Outcome ~ Treatment + Covariates.
+#' @param model_method Currently only supported "logistic" for logit-link binomial GLM.
+#' @param treatment_var_name The name of the treatment variable's column in `data`
+#' @inheritParams estimateDRIPTW
 #'
 #' @export
 estimateGF <- function(

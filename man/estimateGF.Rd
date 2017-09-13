@@ -2,20 +2,21 @@
 % Please edit documentation in R/estimateGF.R
 \name{estimateGF}
 \alias{estimateGF}
-\title{Estimate ATE with IPTW}
+\title{Estimate ATE with G-Formula}
 \usage{
 estimateGF(data, formula, model_method = "logistic", treatment_var_name, ...)
 }
 \arguments{
-\item{data}{the dataframe. Will be coerced from "tbl_df" to data.frame.}
+\item{data}{The dataframe. This will be coerced from "tbl_df" to data.frame.}
 
-\item{formula}{Three-part formula: Outcome | Treatment ~ model_predictors. Will be coerced to object of type Formula.}
+\item{formula}{Two-part formula: Outcome ~ Treatment + Covariates.}
 
-\item{model_method}{currently only supported "logistic" for logit-link binomial GLM.}
+\item{model_method}{Currently only supported "logistic" for logit-link binomial GLM.}
 
-\item{treatment_var_name}{the name of the treatment variable. Must line up with formula.}
+\item{treatment_var_name}{The name of the treatment variable's column in `data`}
 
-\item{...}{the dots}
+\item{...}{additional arguments, especially those passed to
+\code{\link[geex]{m_estimate}} or the modeling function}
 }
 \description{
 Fits a parametric model and estimates ATE via IPTW with Wald-type confidence

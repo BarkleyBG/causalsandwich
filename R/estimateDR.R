@@ -1,16 +1,18 @@
 
-#' Estimate ATE with IPTW
+#' Estimate ATE with Doubly Robust IPTW.
 #'
 #' Fits a parametric model and estimates ATE via IPTW with Wald-type confidence
 #' intervals from the empirical sandwich standard error estimates.
 #'
-#' @param outcome_formula Two part formula: Outcome ~ Covars + Trt
-#' @param outcome_model_method currently only supported "logistic" for logit-link binomial GLM.
-#' @param treatment_formula Two part formula: Trt ~ Covars
-#' @param treatment_model_method currently only supported "logistic" for logit-link binomial GLM.
-#' @param data the dataframe. Will be coerced from "tbl_df" to data.frame.
-#' @param weight_type Currently only supports "unstabilized"
-#' @param ... additional args
+#' @param outcome_formula A two-part formula for the outcome regression.
+#' @param outcome_model_method currently only supported "logistic" for
+#'   logit-link binomial GLM.
+#' @param treatment_formula A two-part formula for the treatment model.
+#' @param treatment_model_method currently only supported "logistic" for
+#'   logit-link binomial GLM.
+#' @param data The dataframe. This will be coerced from "tbl_df" to data.frame.
+#' @param ... additional arguments, especially those passed to
+#'   \code{\link[geex]{m_estimate}} or the modeling function
 #'
 #' @export
 estimateDRIPTW <- function(
@@ -19,7 +21,7 @@ estimateDRIPTW <- function(
   outcome_model_method="logistic",
   treatment_formula,
   treatment_model_method="logistic",
-  weight_type="unstabilized",
+  # weight_type="unstabilized",
   ...
 ){
 
@@ -79,12 +81,12 @@ estimateDRIPTW <- function(
       idx_treatment_params = idx_treatment_params
     )
   )
-  if (weight_type == "unstabilized") {
+  # if (weight_type == "unstabilized") {
     # calcFunDRIPTW <- match.fun('unstabilizedDRIPTW')
     calcFunDRIPTW <- unstabilizedDRIPTW
-  } else {
-    # if (weight_type!= "unstabilized") {
-    stop("only unstabilized weights implemented")}
+  # } else {
+  #   # if (weight_type!= "unstabilized") {
+  #   stop("only unstabilized weights implemented")}
 
   args_list$calcFunDRIPTW <- calcFunDRIPTW
 

@@ -8,15 +8,16 @@ estimateIPTW(data, formula, model_method = "logistic",
   weight_type = "unstabilized", ...)
 }
 \arguments{
-\item{data}{the dataframe. Will be coerced from "tbl_df" to data.frame.}
+\item{data}{The dataframe. This will be coerced from "tbl_df" to data.frame.}
 
-\item{formula}{Three-part formula: Outcome | Treatment ~ model_predictors | cluster_ID. Will be coerced to object of type Formula.}
+\item{formula}{Three-part formula: Outcome | Treatment ~ Covars.}
 
-\item{model_method}{currently only supported "logistic" for logit-link binomial GLM.}
+\item{model_method}{Currently only supports "logistic" for logit-link binomial GLM.}
 
 \item{weight_type}{Currently only supports "unstabilized"}
 
-\item{...}{additional args}
+\item{...}{additional arguments, especially those passed to
+\code{\link[geex]{m_estimate}} or the modeling function}
 }
 \description{
 Fits a parametric model and estimates ATE via IPTW with Wald-type confidence

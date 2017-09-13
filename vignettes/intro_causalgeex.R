@@ -19,10 +19,42 @@ outprobs <- plogis(0.5  + 0.2*data$Covar1 - 0.2*data$Covar2 + 0.2*data$Covar1 * 
 data$BinaryOutcome <- rbinom(n, 1, outprobs)
 
 ## ------------------------------------------------------------------------
+formula <- BinaryOutcome | BinaryTrt ~ Covar1 * Covar2
 
+IPTW <- estimateIPTW(
+  data = data, 
+  formula = formula 
+) 
 
 ## ------------------------------------------------------------------------
-outcome_regression_formula <- BinaryOutcome ~ BinaryTrt + Covar1*Covar2
+(ests <- IPTW@estimates)
+(vcov <- IPTW@vcov) 
+
+## ------------------------------------------------------------------------
+param_num <- 5
+ests[param_num]
+ests[param_num] + stats::qnorm(c(0.025,0.975))*vcov[param_num,param_num]
+
+## ------------------------------------------------------------------------
+outcome_regression_formula <- BinaryOutcome ~ BinaryTrt + Covar1 * Covar2
+
+GF <- estimateGF(
+  data = data,
+  treatment_var_name = "BinaryTrt",
+  formula = outcome_regression_formula, 
+  model_method = "logistic" 
+) 
+ 
+(ests <- GF@estimates)
+(vcov <- GF@vcov) 
+
+## ------------------------------------------------------------------------
+param_num <- 6
+ests[param_num]
+ests[param_num] + stats::qnorm(c(0.025,0.975))*vcov[param_num,param_num]
+
+## ------------------------------------------------------------------------
+outcome_regression_formula <- BinaryOutcome ~ BinaryTrt + Covar1 * Covar2
 treatment_model_formula <- BinaryTrt ~ Covar1 * Covar2
 
 DRIPTW <- estimateDRIPTW(
@@ -38,6 +70,7 @@ DRIPTW <- estimateDRIPTW(
 (vcov <- DRIPTW@vcov)
 
 ## ------------------------------------------------------------------------
-ests[10]
-ests[10] + stats::qnorm(c(0.025,0.975))*vcov[10,10]
+param_num <- 10
+ests[param_num]
+ests[param_num] + stats::qnorm(c(0.025,0.975))*vcov[param_num,param_num]
 
