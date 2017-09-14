@@ -1,13 +1,13 @@
-Package: causalgeex
+Package: causalsandwich
 Type: Package
-Date: 2017-09-06
-Title: Causal Effects of Nonrandomized Policies Assuming Clustered Interference
-Version: 0.0.0.9000
+Date: 2017-09-14
+Title: Estimating Causal Effects with M-Estimation Sandwich Variance Estimator
+Version: 0.0.1
 Authors@R: person("Brian", "Barkley", email = "BarkleyBG@unc.edu",
     role = c("aut", "cre"))
 Description: Estimating causal effects from observational studies. Implemented
-    methods include inverse probability of treatment weights, and parametric
-    G-formula. This package uses the geex package for estimation and for its API
+    methods include inverse probability of treatment weights estimator of ATE.
+    This package uses the geex package for estimation and for its API
     functionality to obtain the empirical sandwich variance estimator using 
     standard estimating equation theory.
 License: GPL-3

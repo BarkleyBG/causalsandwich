@@ -2,10 +2,10 @@
 knitr::opts_chunk$set(echo = TRUE)
 
 ## ---- eval = FALSE-------------------------------------------------------
-#  devtools::install_github("BarkleyBG/causalgeex")
+#  devtools::install_github("BarkleyBG/causalsandwich")
 
 ## ------------------------------------------------------------------------
-library(causalgeex)
+library(causalsandwich)
 
 n <- 200
 data <- data.frame(

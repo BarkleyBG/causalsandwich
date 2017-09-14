@@ -21,9 +21,7 @@ formula_GF <- YY ~ Trt + X*Z
 model_method="logistic"
 # weight_type="unstabilized"
 # weight_type="stabilized"
-# source('~/GitHub/causalgeex/scratch/grabgeexfuns.R')
-# source('~/GitHub/causalgeex/R/eeFunIPW.R')
-# source('~/GitHub/causalgeex/R/eeFunGF.R')
+
 
 args_DRIPTW <- list(
   data = data,

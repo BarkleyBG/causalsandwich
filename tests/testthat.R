@@ -1,4 +1,4 @@
 library(testthat)
-library(causalgeex)
+library(causalsandwich)
 
-test_check("causalgeex")
+test_check("causalsandwich")
