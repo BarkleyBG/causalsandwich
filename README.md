@@ -1,5 +1,7 @@
+[![Travis-CI Build Status](https://travis-ci.org/BarkleyBG/causalsandwich.svg?branch=master)](https://travis-ci.org/BarkleyBG/causalsandwich)
+[![Coverage Status](https://img.shields.io/codecov/c/github/BarkleyBG/causalsandwich/master.svg)](https://codecov.io/github/BarkleyBG/causalsandwich?branch=master)
 
-# `causalsandwich` for estimating causal effects with empirical sandwich variance estimator
+# `causalsandwich` is used to estimate causal effects with empirical sandwich variance estimator. This means that the estimators have nice asymptotic properties when models are correctly specified.
 
 Currently implemented as of version 0.0.0.9000:
 
